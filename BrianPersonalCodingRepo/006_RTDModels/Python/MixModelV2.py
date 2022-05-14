@@ -62,16 +62,18 @@ def rk4_1d(func,x0,y0,xn,n,args):
     return [xout,yn]
 
 def rk4_2d(func,x0,y0,xn,n,args):
-    from tqdm import tqdm
-
+    # Function outputs include:
+    # 1) a vector containing the iterated time values
+    # 2) dydt[component number i][CSTR number n]
+    
     # Calculating step size
     h = (xn-x0)/n
     xout = np.linspace(x0,xn,n)
     yn = np.empty((0)) # initialize output array
-    print("------------------------------------------------------------------------------------------------------------------------------")
-    print("Solving Differential...")
-    print("------------------------------------------------------------------------------------------------------------------------------")
-    for i in tqdm(range(n)):
+    #print("------------------------------------------------------------------------------------------------------------------------------")
+    #print("Solving Differential...")
+    #print("------------------------------------------------------------------------------------------------------------------------------")
+    for i in (range(n)):
         k1 = h * (func(y0, x0,*args))
         k2 = h * (func((y0+k1/2), (x0+h/2), *args))
         k3 = h * (func((y0+k2/2), (x0+h/2), *args))
@@ -84,12 +86,17 @@ def rk4_2d(func,x0,y0,xn,n,args):
             y0 = y0 + k
             yn = np.dstack([yn, y0])
         x0 = x0+h
-    yn = yn.transpose(2, 0, 1)
+    yn = yn.transpose(2, 0, 1) # transpose y output to to following dimensions: yn[iteration #][component #][CSTR #]
     return [xout,yn]
 
-def rossiter(M, Mss, m11, Ncstr):
-    dMdt = (Mss - M)*(m11/M)/Ncstr # Rossiter Mass accumulation simulation
+def rossiter(M, Mss, m11):
+    dMdt = (Mss - M)*(m11/M) # Rossiter Mass accumulation simulation
     M_cv = M + dMdt
+    return [M_cv, dMdt]
+def mass_update(M, Mss, m11, M_Select):
+
+    if (M_Select == 1):
+        [M_cv, dMdt] = rossiter(M, Mss, m11)
     return [M_cv, dMdt]
 
 def cstr(y, t, y0, M, dMdt, q, m11, x, Ncstr):
@@ -218,9 +225,9 @@ def cstrSimp(y, t, y0, M, dMdt, q, m11, x, N):
             exp_CSTR = np.array([cstrOne, cstrTwo])
         elif (Ncstr == 3):
             # Three CSTR (Ncstr = 3)
-            cstrOne = (m11*(y0[i] - y[i][0]) + m41*(y[i][1] - y[i][0]))/Mn # checked good
-            cstrTwo = (m31*(y[i][0] - y[i][1]) + m42*(y[i][2] - y[i][1]))/Mn # checked good
-            cstrThree = (m32*(y[i][1] - y[i][2]))/Mn # checked good
+            cstrOne = (m11*(y0[i] - y[i][0]) + m41*(y[i][1] - y[i][0]))/Mn
+            cstrTwo = (m31*(y[i][0] - y[i][1]) + m42*(y[i][2] - y[i][1]))/Mn
+            cstrThree = (m32*(y[i][1] - y[i][2]))/Mn
             exp_CSTR = np.array([cstrOne, cstrTwo, cstrThree])
 
         if (i == 0):
@@ -242,7 +249,9 @@ def cstrN(y, t, y0, M, dMdt, q, m_in, x, N):
     # x is the number of material streams
     # N is the number of total CSTRs (and consequently the total number of differential equations)
     # n is the current CSTR differential equation (i.e. Differential equation of CSTR n of N)
-    
+    # Ouput (dydt) is a matrix containing CSTR output concentration change w.r.t. time and is formatted as follows: dydt[component number i][CSTR number n]
+
+
     # Below are the constants for the differential equations
     Mn = M/N # Mass term for the current CSTR differential equation (i.e. mass for CSTR n of N)
     dMndt = (dMdt/N) # Mass accumulation term for the current CSTR differential equation (i.e. mass accumulation for CSTR n of N)
@@ -259,28 +268,6 @@ def cstrN(y, t, y0, M, dMdt, q, m_in, x, N):
 
     dydt = np.empty((0)) # initialize differential equation array
 
-    '''
-    for i in range(x):
-        CSTR_n = np.empty((0)) # initialize differential equation array
-        if (N == 1):
-            CSTR_One = m_in*(y0[i] - y[i])/Mn
-            CSTR_n = np.append(CSTR_n, CSTR_One)
-            #print('cnd1')
-        elif (N > 1):
-            for n in range(N):
-                if (n == 0) and (n != (N-1)):
-                    CSTR_One = (m_in*(y0[i] - y[i][0])/Mn) + (q*(m_in - dMndt)*(y[i][1] - y[i][0]))/((1 - q)*Mn)
-                    #print('cnd2')
-                    CSTR_n = np.append(CSTR_n, CSTR_One)
-                elif (n > 0) and (n < (N-1)):
-                    CSTR_x = ((m_in - (n)*dMndt)*(y[i][n-1] - y[i][n]) + (q*(m_in - (n+1)*dMndt)*(y[i][n+1] - y[i][n])))/((1 - q)*Mn)
-                    #print('cnd3')
-                    CSTR_n = np.append(CSTR_n, CSTR_x)
-                elif (n == (N-1)):
-                    CSTR_N = ((m_in - (n)*dMndt)*(y[i][n-1] - y[i][n]))/Mn
-                    #print('cnd4')
-                    CSTR_n = np.append(CSTR_n, CSTR_N)
-    '''
     for i in range(x):
         CSTR_n = np.empty((0)) # initialize differential equation array
         if (N == 1):
@@ -316,7 +303,7 @@ def cstrRandInit(x,N):
     yinit = np.expand_dims(yinit, axis = 1)
     yinit = np.tile(yinit,(1,N))
     return yinit
-
+'''
 #Set constants
 print("Enter number of streams")
 x = int(input())
@@ -331,9 +318,8 @@ Mss = 100 # mass at steady state
 q1 = .9 # % backmix
 q2 = 0 # % backmix
 m11 = 1 # input flow rate
+dMdt = 0
 
-# Update Mass
-[M_cv, dMdt] = rossiter(M, Mss, m11, Ncstr)
 
 yinit = cstrRandInit(x,Ncstr)
 
@@ -344,9 +330,9 @@ nsteps = int(input("Enter number of time steps"))
 t = np.linspace(t0, tn, nsteps)
 # Solve ODE
 #y_odeint = odeint(cstr, y_init, t, args=(yin, M_cv, dMdt, q, m11, x, Ncstr))
-[x_n,y_rk4_n] = rk4_2d(cstrN, x0 = t0, y0 = yinit, xn = tn, n=nsteps, args=(yin, M_cv, dMdt, q1, m11, x, Ncstr))
-[x_old,y_rk4_old] = rk4_2d(cstrSimp, x0 = t0, y0 = yinit, xn = tn, n=nsteps, args=(yin, M_cv, dMdt, q1, m11, x, Ncstr))
-
+[x_n,y_rk4_n] = rk4_2d(cstrN, x0 = t0, y0 = yinit, xn = tn, n=nsteps, args=(yin, M, dMdt, q1, m11, x, Ncstr))
+[x_old,y_rk4_old] = rk4_2d(cstrSimp, x0 = t0, y0 = yinit, xn = tn, n=nsteps, args=(yin, M, dMdt, q1, m11, x, Ncstr))
+print(np.shape(y_rk4_n))
 #plot ODE solutions
 if (Ncstr == 1): #base case
     plt.plot(x_n,y_rk4_n[::, ::, 0], 'm.', x_old,y_rk4_old[::, ::, 0], 'k-', x*[t0], yinit.transpose(1,0)[0,::], 'go', x*[tn], yin, 'ro')
@@ -367,4 +353,4 @@ plt.plot(x_n,y_rk4_n[::, ::, Ncstr - 1], 'm.', x_old,y_rk4_old[::, ::, Ncstr - 1
 plt.xlabel("time")
 plt.ylabel("concentration(x)")
 plt.show()
-
+'''

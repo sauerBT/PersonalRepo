@@ -1,0 +1,5 @@
+Name,Type,ID,Group,Description,HI Value,LO Value,Default Value,Units,Names Set,Named Set Value
+String 1,Type 1,1,,String 1 Type 1,20,1,10,kg,,
+String 2,Type 2,2,,String 1 Type 2,21,2,11,kg,,
+String 3,Type 3,3,,String 1 Type 3,22,3,12,kg,,
+String 4,Type 4,4,,String 1 Type 4,23,4,13,kg,,
