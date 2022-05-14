@@ -1,5 +1,5 @@
 from PyQt6 import QtWidgets
-from PyQt6.QtWidgets import QApplication, QWidget
+from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget
 
 # Only needed for access to command line arguments
 import sys
@@ -11,7 +11,7 @@ import sys
 app = QApplication(sys.argv)
 
 # Create a QtWidget which will be our window.
-window = QWidget()
+window = QMainWindow()
 window.show() #IMPORTANT!!!! Windows are hidden by default
 
 #Start the event loop
