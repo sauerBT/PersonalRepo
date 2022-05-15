@@ -15,19 +15,18 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("Signals")
 
         self.button = QPushButton("Press Me!")
-        self.button.setCheckable(True)
-        self.button.released.connect(self.the_button_was_released)
-        self.button.setChecked(self.button_is_checked)
+        self.button.clicked.connect(self.the_button_was_clicked)
 
         self.setMinimumSize(QSize(400,300))
 
         #Set central widget of the window
         self.setCentralWidget(self.button)
 
-    def the_button_was_released(self):
-        self.button_is_checked = self.button.isChecked()
+    def the_button_was_clicked(self):
+        self.button.setText("You already clicked me.")
+        self.button.setEnabled(False)
 
-        print(self.button_is_checked)
+        self.setWindowTitle("My One Shot App")
 
 # You need one (and only one) QApplication instance per application.
 # Pass in sys.argv to allow command line arguments for your app.
