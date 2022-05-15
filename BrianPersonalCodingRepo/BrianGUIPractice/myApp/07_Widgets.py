@@ -12,22 +12,17 @@ class MainWindow(QMainWindow):
 
         self.setWindowTitle("My App")
 
-        self.label = QLabel()
-
-        self.input = QLineEdit()
-        self.input.textChanged.connect(self.label.setText)
-
-        layout = QVBoxLayout()
-        layout.addWidget(self.input)
-        layout.addWidget(self.label)
-
-        container = QWidget()
-        container.setLayout(layout)
+        widget = QLabel("Hello")
+        font = widget.font()
+        font.setPointSize(30)
+        widget.setFont(font)
+        widget.setAlignment(Qt.AlignmentFlag.AlignHCenter | 
+        Qt.AlignmentFlag.AlignVCenter)
 
         self.setMinimumSize(QSize(1000,800))
 
         #Set central widget of the window
-        self.setCentralWidget(container)
+        self.setCentralWidget(widget)
 
 # You need one (and only one) QApplication instance per application.
 # Pass in sys.argv to allow command line arguments for your app.
