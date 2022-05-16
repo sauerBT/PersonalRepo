@@ -1,5 +1,6 @@
+import re
 from PyQt6.QtCore import QSize, Qt
-from PyQt6.QtWidgets import QApplication, QMainWindow, QCheckBox
+from PyQt6.QtWidgets import QApplication, QMainWindow, QComboBox
 
 # Only needed for access to command line arguments
 import sys
@@ -11,20 +12,22 @@ class MainWindow(QMainWindow):
 
         self.setWindowTitle("My App")
 
-        widget = QCheckBox("This is a checkbox")
-        widget.setCheckState(Qt.CheckState.Checked)
+        widget = QComboBox()
+        widget.addItems(["One", "Two", "Three"])
 
-        widget.stateChanged.connect(self.show_state)
+        widget.currentIndexChanged.connect(self.index_changed)
+        widget.currentTextChanged.connect(self.text_changed)
 
         self.setMinimumSize(QSize(300,200))
 
         #Set central widget of the window
         self.setCentralWidget(widget)
 
-    def show_state(self, s):
-        print(Qt.CheckState(s) == Qt.CheckState.Checked)
-        print(s)
+    def index_changed(self, i): #i is an int
+        print(i)
 
+    def text_changed(self, s): # s is a str
+        print(s)
 # You need one (and only one) QApplication instance per application.
 # Pass in sys.argv to allow command line arguments for your app.
 # If you know you won't use command line arguments QApplication([])
