@@ -1,6 +1,6 @@
 import re
 from PyQt6.QtCore import QSize, Qt
-from PyQt6.QtWidgets import QApplication, QMainWindow, QLineEdit
+from PyQt6.QtWidgets import QApplication, QMainWindow, QSpinBox
 
 # Only needed for access to command line arguments
 import sys
@@ -12,36 +12,30 @@ class MainWindow(QMainWindow):
 
         self.setWindowTitle("My App")
 
-        widget = QLineEdit()
-        widget.setMaxLength(10)
-        widget.setPlaceholderText("Enter your text")
-        widget.setInputMask("000.000.000.000;_") # force user or program to enter IP address
+        widget = QSpinBox()
+        # Or: widget = QDoubleSpinBox()
 
-        widget.returnPressed.connect(self.return_pressed)
-        widget.selectionChanged.connect(self.selection_changed)
-        widget.textChanged.connect(self.text_changed)
-        widget.textEdited.connect(self.text_edited)
+        widget.setMinimum(-10)
+        widget.setMaximum(3)
+        # Or: widget.setRange(-10,3)
+
+        widget.setPrefix("$")
+        widget.setSuffix("c")
+        widget.setSingleStep(3) # Or e.g. 0.5 for QDoubleSpinBox
+        widget.valueChanged.connect(self.value_changed)
+        widget.textChanged.connect(self.value_changed_str)
 
         self.setMinimumSize(QSize(300,200))
 
         #Set central widget of the window
         self.setCentralWidget(widget)
 
-    def return_pressed(self):
-        print("Return pressed!")
-        self.centralWidget().setText("BOOM!")
+    def value_changed(self, i): # i is an int
+        print(i)
 
-    def selection_changed(self):
-        print("Selection changed")
-        print(self.centralWidget().selectedText())
-
-    def text_changed(self, s): # s is a str
-        print("Text changed...")
+    def value_changed_str(self, s): # s is a str
         print(s)
 
-    def text_edited(self, s):
-        print("Text edited...")
-        print(s)
 # You need one (and only one) QApplication instance per application.
 # Pass in sys.argv to allow command line arguments for your app.
 # If you know you won't use command line arguments QApplication([])
