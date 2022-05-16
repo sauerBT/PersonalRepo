@@ -14,6 +14,9 @@ class MainWindow(QMainWindow):
 
         widget = QComboBox()
         widget.addItems(["One", "Two", "Three"])
+        widget.setEditable(True)
+        widget.setInsertPolicy(QComboBox.InsertPolicy.InsertAlphabetically)
+        widget.setMaxCount(10)
 
         widget.currentIndexChanged.connect(self.index_changed)
         widget.currentTextChanged.connect(self.text_changed)
