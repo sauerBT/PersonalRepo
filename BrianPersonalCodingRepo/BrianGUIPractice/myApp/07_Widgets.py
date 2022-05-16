@@ -1,6 +1,6 @@
 import re
 from PyQt6.QtCore import QSize, Qt
-from PyQt6.QtWidgets import QApplication, QMainWindow, QComboBox
+from PyQt6.QtWidgets import QApplication, QMainWindow, QListWidget
 
 # Only needed for access to command line arguments
 import sys
@@ -12,13 +12,10 @@ class MainWindow(QMainWindow):
 
         self.setWindowTitle("My App")
 
-        widget = QComboBox()
+        widget = QListWidget()
         widget.addItems(["One", "Two", "Three"])
-        widget.setEditable(True)
-        widget.setInsertPolicy(QComboBox.InsertPolicy.InsertAlphabetically)
-        widget.setMaxCount(10)
 
-        widget.currentIndexChanged.connect(self.index_changed)
+        widget.currentItemChanged.connect(self.index_changed)
         widget.currentTextChanged.connect(self.text_changed)
 
         self.setMinimumSize(QSize(300,200))
@@ -26,8 +23,8 @@ class MainWindow(QMainWindow):
         #Set central widget of the window
         self.setCentralWidget(widget)
 
-    def index_changed(self, i): #i is an int
-        print(i)
+    def index_changed(self, i): # Not an index, i is a QListItem
+        print(i.text())
 
     def text_changed(self, s): # s is a str
         print(s)
