@@ -1,6 +1,6 @@
 import re
 from PyQt6.QtCore import QSize, Qt
-from PyQt6.QtWidgets import QApplication, QMainWindow, QSlider
+from PyQt6.QtWidgets import QApplication, QMainWindow, QDial
 
 # Only needed for access to command line arguments
 import sys
@@ -12,13 +12,11 @@ class MainWindow(QMainWindow):
 
         self.setWindowTitle("My App")
 
-        widget = QSlider()
+        widget = QDial()
 
-        widget.setMinimum(-10)
-        widget.setMaximum(3)
-        # Or: widget.setRange(-10,3)
-
-        widget.setSingleStep(3)
+        widget.setRange(-10,100)
+        widget.setSingleStep(1)
+        
         widget.valueChanged.connect(self.value_changed)
         widget.sliderMoved.connect(self.slider_position)
         widget.sliderPressed.connect(self.slider_pressed)
