@@ -1,5 +1,5 @@
 from PyQt6.QtCore import QSize, Qt
-from PyQt6.QtWidgets import QApplication, QMainWindow, QGridLayout, QWidget
+from PyQt6.QtWidgets import QApplication, QMainWindow, QStackedLayout, QWidget
 
 from layout_colorwidget import Color
 
@@ -13,13 +13,15 @@ class MainWindow(QMainWindow):
 
         self.setWindowTitle("My App")
 
-        layout = QGridLayout()
+        layout = QStackedLayout()
 
-        layout.addWidget(Color("red"), 0, 0)
-        layout.addWidget(Color("green"), 1, 0)
-        layout.addWidget(Color("blue"), 1, 1)
-        layout.addWidget(Color("purple"), 2, 1)
-        
+        layout.addWidget(Color("red"))
+        layout.addWidget(Color("green"))
+        layout.addWidget(Color("blue"))
+        layout.addWidget(Color("yellow"))
+
+        layout.setCurrentIndex(3)
+
         widget = QWidget()
         widget.setLayout(layout)
 
