@@ -1,5 +1,5 @@
 from PyQt6.QtCore import QSize, Qt
-from PyQt6.QtWidgets import QApplication, QMainWindow, QHBoxLayout, QWidget
+from PyQt6.QtWidgets import QApplication, QMainWindow, QHBoxLayout, QVBoxLayout, QWidget
 
 from layout_colorwidget import Color
 
@@ -13,14 +13,27 @@ class MainWindow(QMainWindow):
 
         self.setWindowTitle("My App")
 
-        layout = QHBoxLayout()
+        layout1 = QHBoxLayout()
+        layout2 = QVBoxLayout()
+        layout3 = QVBoxLayout()
 
-        layout.addWidget(Color('red'))
-        layout.addWidget(Color("green"))
-        layout.addWidget(Color("blue"))
+
+        layout2.addWidget(Color('red'))
+        layout2.addWidget(Color("green"))
+        layout2.addWidget(Color("blue"))
+
+        layout1.addLayout(layout2)
+
+        layout1.addWidget(Color("green"))
+
+        layout3.addWidget(Color("green"))
+        layout3.addWidget(Color("red"))
+        layout3.addWidget(Color("purple"))
+
+        layout1.addLayout(layout3)
 
         widget = QWidget()
-        widget.setLayout(layout)
+        widget.setLayout(layout1)
 
         self.setMinimumSize(QSize(300,200))
 
