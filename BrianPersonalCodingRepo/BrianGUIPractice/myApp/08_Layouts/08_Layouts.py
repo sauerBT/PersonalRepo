@@ -16,6 +16,8 @@ class MainWindow(QMainWindow):
         layout = QVBoxLayout()
 
         layout.addWidget(Color('red'))
+        layout.addWidget(Color("green"))
+        layout.addWidget(Color("blue"))
 
         widget = QWidget()
         widget.setLayout(layout)
