@@ -1,5 +1,12 @@
 from PyQt6.QtCore import QSize, Qt
-from PyQt6.QtWidgets import QApplication, QMainWindow, QStackedLayout, QWidget
+from PyQt6.QtWidgets import (QApplication, 
+QMainWindow, 
+QHBoxLayout,
+QLabel,
+QPushButton,
+QVBoxLayout,
+QStackedLayout, 
+QWidget)
 
 from layout_colorwidget import Color
 
@@ -13,22 +20,44 @@ class MainWindow(QMainWindow):
 
         self.setWindowTitle("My App")
 
-        layout = QStackedLayout()
+        pageLayout = QVBoxLayout()
+        button_layout = QHBoxLayout()
+        self.stackLayout = QStackedLayout()
 
-        layout.addWidget(Color("red"))
-        layout.addWidget(Color("green"))
-        layout.addWidget(Color("blue"))
-        layout.addWidget(Color("yellow"))
+        pageLayout.addLayout(button_layout)
+        pageLayout.addLayout(self.stackLayout)
 
-        layout.setCurrentIndex(3)
+        btn = QPushButton("red")
+        btn.pressed.connect(self.activate_tab_1)
+        button_layout.addWidget(btn)
+        self.stackLayout.addWidget(Color("red"))
+
+        btn = QPushButton("green")
+        btn.pressed.connect(self.activate_tab_2)
+        button_layout.addWidget(btn)
+        self.stackLayout.addWidget(Color("green"))
+
+        btn = QPushButton("yellow")
+        btn.pressed.connect(self.activate_tab_3)
+        button_layout.addWidget(btn)
+        self.stackLayout.addWidget(Color("yellow"))
 
         widget = QWidget()
-        widget.setLayout(layout)
+        widget.setLayout(pageLayout)
 
         self.setMinimumSize(QSize(300,200))
 
         #Set central widget of the window
         self.setCentralWidget(widget)
+
+    def activate_tab_1(self):
+        self.stackLayout.setCurrentIndex(0)
+
+    def activate_tab_2(self):
+        self.stackLayout.setCurrentIndex(1)
+    
+    def activate_tab_3(self):
+        self.stackLayout.setCurrentIndex(2)
 
 # You need one (and only one) QApplication instance per application.
 # Pass in sys.argv to allow command line arguments for your app.
