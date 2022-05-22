@@ -4,6 +4,7 @@ from PyQt6.QtWidgets import (QApplication,
 QMainWindow,
 QLabel,
 QToolBar,
+QStatusBar,
 QWidget)
 
 from layout_colorwidget import Color
@@ -33,6 +34,8 @@ class MainWindow(QMainWindow):
         button_action.setStatusTip("This is your button")
         button_action.triggered.connect(self.onMyToolBarButtonClick)
         toolbar.addAction(button_action)
+
+        self.setStatusBar(QStatusBar(self)) # <-- adds a status bar to the main window
 
     def onMyToolBarButtonClick(self, s):
         print("click", s)
