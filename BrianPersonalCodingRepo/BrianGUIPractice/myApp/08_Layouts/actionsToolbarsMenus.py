@@ -1,5 +1,5 @@
 from PyQt6.QtCore import QSize, Qt
-from PyQt6.QtGui import QAction
+from PyQt6.QtGui import QAction, QIcon
 from PyQt6.QtWidgets import (QApplication, 
 QMainWindow,
 QLabel,
@@ -28,12 +28,13 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(label)
 
         toolbar = QToolBar("My main toolbar")
+        toolbar.setIconSize(QSize(16,16))
         self.addToolBar(toolbar)
 
-        button_action = QAction("Your button", self)
+        button_action = QAction(QIcon(r"BrianGUIPractice\myApp\08_Layouts\home.png"),"Your button", self) # <-- QIcon() added to display the icon image designated by the path.  Note r before the directory to get raw string variables
         button_action.setStatusTip("This is your button")
         button_action.triggered.connect(self.onMyToolBarButtonClick)
-        button_action.setCheckable(True) # <-- makes the Toolbar object toggleable
+        button_action.setCheckable(True)
         toolbar.addAction(button_action)
 
         self.setStatusBar(QStatusBar(self))
