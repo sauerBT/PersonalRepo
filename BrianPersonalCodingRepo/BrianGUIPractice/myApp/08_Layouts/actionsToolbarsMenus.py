@@ -5,6 +5,7 @@ QMainWindow,
 QLabel,
 QToolBar,
 QStatusBar,
+QCheckBox,
 QWidget)
 
 from layout_colorwidget import Color
@@ -36,6 +37,17 @@ class MainWindow(QMainWindow):
         button_action.triggered.connect(self.onMyToolBarButtonClick)
         button_action.setCheckable(True)
         toolbar.addAction(button_action)
+
+        toolbar.addSeparator()
+
+        button_action2 = QAction(QIcon(r"BrianGUIPractice\myApp\08_Layouts\home.png"), "Your button2", self)
+        button_action2.setStatusTip("This is your button2")
+        button_action2.triggered.connect(self.onMyToolBarButtonClick)
+        button_action2.setCheckable(True)
+        toolbar.addAction(button_action2)
+
+        toolbar.addWidget(QLabel("Hello"))
+        toolbar.addWidget(QCheckBox())
 
         self.setStatusBar(QStatusBar(self))
 
