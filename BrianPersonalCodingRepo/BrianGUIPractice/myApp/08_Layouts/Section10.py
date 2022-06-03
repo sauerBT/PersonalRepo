@@ -33,13 +33,17 @@ class MainWindow(QMainWindow):
         dlg = QMessageBox(self)
         dlg.setWindowTitle("I have a question!")
         dlg.setText("This is a simple dialog")
+        dlg.setStandardButtons(QMessageBox.StandardButton.Yes|QMessageBox.StandardButton.No)
+        dlg.setIcon(QMessageBox.Icon.Question)
         button = dlg.exec()
 
         # Look up the button enum entry for the result.
         button = QMessageBox.StandardButton(button)
 
-        if button == QMessageBox.StandardButton.Ok:
-            print("OK!")
+        if button == QMessageBox.StandardButton.Yes:
+            print("Yes!")
+        else:
+            print("No!")
 
 
 class CustomDialog(QDialog):
