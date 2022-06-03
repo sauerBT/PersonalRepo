@@ -6,6 +6,7 @@ QPushButton,
 QDialog,
 QDialogButtonBox,
 QVBoxLayout,
+QMessageBox,
 QLabel)
 
 from layout_colorwidget import Color
@@ -29,13 +30,17 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(button)
 
     def button_clicked(self, s):
-        print("click", s)
+        dlg = QMessageBox(self)
+        dlg.setWindowTitle("I have a question!")
+        dlg.setText("This is a simple dialog")
+        button = dlg.exec()
 
-        dlg = CustomDialog(self)
-        if dlg.exec():
-            print("Success!")
-        else:
-            print("Cancel!")    
+        # Look up the button enum entry for the result.
+        button = QMessageBox.StandardButton(button)
+
+        if button == QMessageBox.StandardButton.Ok:
+            print("OK!")
+
 
 class CustomDialog(QDialog):
     def __init__(self, parent=None):
