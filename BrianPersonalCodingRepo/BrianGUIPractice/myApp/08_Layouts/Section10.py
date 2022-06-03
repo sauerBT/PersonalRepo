@@ -31,12 +31,14 @@ class MainWindow(QMainWindow):
 
     def button_clicked(self, s):
         
-        button = QMessageBox.question(self, "Question dialog", "The longer message")
+        button = QMessageBox.critical(self, "Oh dear!", "Something went very wrong.", buttons=QMessageBox.StandardButton.Discard|QMessageBox.StandardButton.NoToAll|QMessageBox.StandardButton.Ignore, defaultButton=QMessageBox.StandardButton.Discard)
 
-        if button == QMessageBox.StandardButton.Yes:
-            print("Yes!")
+        if button == QMessageBox.StandardButton.Discard:
+            print("Discard!")
+        elif button == QMessageBox.StandardButton.NoToAll:
+            print("No To All!")
         else:
-            print("No!")
+            print("Ignore!")
 
 
 class CustomDialog(QDialog):
