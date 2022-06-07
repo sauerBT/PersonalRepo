@@ -38,6 +38,8 @@ class MainWindow(QMainWindow):
         if self.w is None:
             self.w = AnotherWindow()
             self.w.show()
+        else:
+            self.w = None
 
 # You need one (and only one) QApplication instance per application.
 # Pass in sys.argv to allow command line arguments for your app.
