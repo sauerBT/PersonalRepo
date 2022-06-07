@@ -39,6 +39,7 @@ class MainWindow(QMainWindow):
             self.w = AnotherWindow()
             self.w.show()
         else:
+            self.w.close()
             self.w = None
 
 # You need one (and only one) QApplication instance per application.
