@@ -28,19 +28,14 @@ class MainWindow(QMainWindow):
         super().__init__()
 
         self.setWindowTitle("My App")
-        self.w = None # No external window yet.
+        self.w = AnotherWindow() # Create persistent instance of the second window
         self.button = QPushButton("Push for Window")
         self.button.clicked.connect(self.show_new_window)
         self.setMinimumSize(QSize(300,200))
         self.setCentralWidget(self.button)
 
     def show_new_window(self, checked):
-        if self.w is None:
-            self.w = AnotherWindow()
-            self.w.show()
-        else:
-            self.w.close()
-            self.w = None
+        self.w.show() # Second window instance already created, so only need to show
 
 # You need one (and only one) QApplication instance per application.
 # Pass in sys.argv to allow command line arguments for your app.
