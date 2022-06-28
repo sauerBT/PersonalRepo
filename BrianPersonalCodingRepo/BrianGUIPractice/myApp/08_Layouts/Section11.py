@@ -5,10 +5,13 @@ QMainWindow,
 QPushButton,
 QVBoxLayout,
 QWidget,
-QLabel)
+QLabel,
+QLineEdit)
 
 # Only needed for access to command line arguments
 import sys
+
+from matplotlib import container
 
 class AnotherWindow(QWidget):
     """
@@ -18,7 +21,7 @@ class AnotherWindow(QWidget):
     def __init__(self):
         super().__init__()
         layout = QVBoxLayout()
-        self.label = QLabel("Another Window % d" % randint(0,100))
+        self.label = QLabel("Another Window")
         layout.addWidget(self.label)
         self.setLayout(layout)
 
@@ -32,7 +35,16 @@ class MainWindow(QMainWindow):
         self.button = QPushButton("Push for Window")
         self.button.clicked.connect(self.toggle_window)
         self.setMinimumSize(QSize(300,200))
-        self.setCentralWidget(self.button)
+
+        self.input = QLineEdit()
+        self.input.textChanged.connect(self.w.label.setText)
+        layout = QVBoxLayout()
+        layout.addWidget(self.button)
+        layout.addWidget(self.input)
+        container = QWidget()
+        container.setLayout(layout)
+
+        self.setCentralWidget(container)
 
     def toggle_window(self, checked):
         if self.w.isVisible():
