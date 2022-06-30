@@ -2,7 +2,7 @@ import random
 import sys
 
 from PyQt6.QtCore import QSize, Qt
-from PyQt6.QtGui import QAction
+from PyQt6.QtGui import QAction, QPalette, QColor
 from PyQt6.QtWidgets import (QApplication, 
 QMainWindow,
 QLabel,
@@ -12,6 +12,12 @@ QWidget,
 QTextEdit)
 
 from MainWindow import Ui_MainWindow
+
+
+palette = QPalette()
+palette.setColor(QPalette.ColorRole.Window, QColor(53,53,53))
+palette.setColor(QPalette.ColorRole.WindowText, Qt.GlobalColor.yellow)
+palette.setColor(QPalette.ColorGroup.Disabled, QPalette.ColorRole.WindowText, Qt.GlobalColor.white)
 
 class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self, *args, obj=None, **kwargs):
@@ -40,6 +46,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 # works too.
 app = QApplication(sys.argv)
 app.setStyle("Fusion")
+app.setPalette(palette)
 
 w = MainWindow()
 
