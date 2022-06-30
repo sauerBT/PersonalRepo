@@ -39,6 +39,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 # If you know you won't use command line arguments QApplication([])
 # works too.
 app = QApplication(sys.argv)
+app.setStyle("Fusion")
 
 w = MainWindow()
 
