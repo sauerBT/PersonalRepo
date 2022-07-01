@@ -5,6 +5,18 @@ from PyQt6.QtCore import Qt
 
 from MainWindow import Ui_MainWindow
 
+class ToDoModel(QtCore.QAbstractListModel):
+    def __init__(self, todos=None):
+        super().__init__()
+        self.todos - todos or []
+
+    def data(self, index, role):
+        if role == Qt.ItemDataRole.DisplayRole:
+            status, text = self.todos[index.row()]
+            return text
+
+    def rowCount(self, index):
+        return len(self.todos)
 
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def __init__(self):
