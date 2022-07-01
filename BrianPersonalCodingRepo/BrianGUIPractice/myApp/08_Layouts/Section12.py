@@ -6,6 +6,7 @@ from PyQt6.QtGui import QAction
 from PyQt6.QtWidgets import (QApplication, 
 QMainWindow,
 QLabel,
+QPushButton,
 QMenu,
 QWidget,
 QTextEdit)
@@ -15,10 +16,6 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setMinimumSize(QSize(300,200))
-        self.show()
-
-        self.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
-        self.customContextMenuRequested.connect(self.on_context_menu)
 
     def on_context_menu(self, pos):
         context = QMenu(self)
@@ -26,6 +23,10 @@ class MainWindow(QMainWindow):
         context.addAction(QAction("test 2", self))
         context.addAction(QAction("test 3", self))
         context.exec(self.mapToGlobal(pos))
+
+class CustomButton(QPushButton):
+    def mousePressEvent(self, e):
+        e.accept()
 
 
 # You need one (and only one) QApplication instance per application.
