@@ -1,3 +1,4 @@
+from datetime import datetime
 import sys
 from PyQt6 import QtCore, QtGui, QtWidgets
 from PyQt6.QtCore import Qt
@@ -5,15 +6,30 @@ from PyQt6.QtCore import Qt
 
 class TableModel(QtCore.QAbstractTableModel):
     def __init__(self, data):
-        super().__init__()
+        super(TableModel, self).__init__()
         self._data = data
 
     def data(self, index, role):
         if role == Qt.ItemDataRole.DisplayRole:
-            # See below for the nested-list data structure.
-            # .row() indexes into the outer list,
-            # .column() indexes into the sub-list
-            return self._data[index.row()][index.column()]
+            # get the raw value
+            value = self._data[index.row()][index.column()]
+
+            # Perform per-type checks and render accordingly.
+            if isinstance(value, datetime):
+                # render time to YYY-MM-DD
+                return value.strftime("%Y-%m-%d")
+
+            if isinstance(value, float):
+                # render float to 2 dp
+                return "%.2f" % value
+            
+            if isinstance(value, str):
+                # render strings with quotes
+                return '"%s"' % value
+
+            # Default (anything not captured above: e.g. int)
+            return value
+
 
     def rowCount(self, index):
         # The length of the outer list.
@@ -32,9 +48,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.table = QtWidgets.QTableView()
 
         data = [
-            [4, 1, 3, 3, 7],
+            [4, 1, 'hello', 3, 7],
             [9, 1, 5, 3, 8],
-            [2, 1, 5, 3, 9],
+            [2, 1, 5, datetime(2017,10,1), 9],
         ]
 
         self.model = TableModel(data)
