@@ -28,12 +28,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.todoView.setModel(self.model)
         self.addButton.pressed.connect(self.add)
         self.deleteButton.pressed.connect(self.delete)
-        # self.completeButton.pressed.connect()
+        self.completeButton.pressed.connect(self.complete)
 
 
     def add(self):
         """
-        Add items to the rodo list, getting the text from the QLineEdit .todoEdit
+        Add items to the todo list, getting the text from the QLineEdit .todoEdit
         and then clearing it.
         """
         text = self.todoEdit.text()
@@ -56,6 +56,20 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.model.layoutChanged.emit()
             # clear the selection (as it is no longer valid)
             self.todoView.clearSelection()
+
+    def complete(self):
+        indexes = self.todoView.selectedIndexes()
+        if indexes:
+            index = indexes[0]
+            row = index.row() # <-- index in this case is a type of Qt opject and row() is a method
+            status, text = self.model.todos[row]
+            self.model.todos[row] = (True, text)
+            #.dataChanged takes top-left and bottom right, which are equal
+            #for a single selection
+            self.model.dataChanged.emit(index, index)
+            # clear the selection (as it is no longer valid)..
+            self.todoView.clearSelection()
+
 
 app = QtWidgets.QApplication(sys.argv)
 window = MainWindow()
