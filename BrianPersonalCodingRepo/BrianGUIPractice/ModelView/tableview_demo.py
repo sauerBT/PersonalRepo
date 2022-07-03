@@ -23,9 +23,12 @@ class TableModel(QtCore.QAbstractTableModel):
             if index.column() == 2: # <----- Makes row three blue
                 # see below for data structure
                 return QtGui.QColor(Qt.GlobalColor.blue)
+        
+        if role == Qt.ItemDataRole.ForegroundRole:
+            value = self._data[index.row()][index.column()]
 
-            if (isinstance(value, float) or isinstance(value, int)) and value > 1:
-                return QtGui.QColor(Qt.GlobalColor.red)
+            if (isinstance(value, int) or isinstance(value, float)) and value < 0:
+                return QtGui.QColor("red")
 
         if role == Qt.ItemDataRole.DisplayRole:
             # get the raw value
@@ -65,7 +68,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.table = QtWidgets.QTableView()
 
         data = [
-            [4, 1, 'hello', 3, 7],
+            [4, 1, 'hello', -2, 7],
             [9, 1, 5, 3, 8],
             [2, 1, 5, datetime(2017,10,1), 9],
         ]
