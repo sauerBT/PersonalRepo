@@ -10,6 +10,11 @@ class TableModel(QtCore.QAbstractTableModel):
         self._data = data
 
     def data(self, index, role):
+
+        if role == Qt.ItemDataRole.BackgroundRole and index.column() == 2: # <----- Makes row three blue
+            # see below for data structure
+            return QtGui.QColor(Qt.GlobalColor.blue)
+
         if role == Qt.ItemDataRole.DisplayRole:
             # get the raw value
             value = self._data[index.row()][index.column()]
