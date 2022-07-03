@@ -10,10 +10,22 @@ class TableModel(QtCore.QAbstractTableModel):
         self._data = data
 
     def data(self, index, role):
+        if role == Qt.ItemDataRole.TextAlignmentRole:
+            value = self._data[index.row()][index.column()]
 
-        if role == Qt.ItemDataRole.BackgroundRole and index.column() == 2: # <----- Makes row three blue
-            # see below for data structure
-            return QtGui.QColor(Qt.GlobalColor.blue)
+            if isinstance(value, int) or isinstance(value, float):
+                # Align right, vertical middle
+                return Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter
+
+        if role == Qt.ItemDataRole.BackgroundRole:
+            value = self._data[index.row()][index.column()]
+
+            if index.column() == 2: # <----- Makes row three blue
+                # see below for data structure
+                return QtGui.QColor(Qt.GlobalColor.blue)
+
+            if (isinstance(value, float) or isinstance(value, int)) and value > 1:
+                return QtGui.QColor(Qt.GlobalColor.red)
 
         if role == Qt.ItemDataRole.DisplayRole:
             # get the raw value
