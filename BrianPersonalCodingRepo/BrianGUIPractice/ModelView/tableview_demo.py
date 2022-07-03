@@ -19,16 +19,24 @@ class TableModel(QtCore.QAbstractTableModel):
 
         if role == Qt.ItemDataRole.BackgroundRole:
             value = self._data[index.row()][index.column()]
+            COLORS = ['#ffffcc','#ffeda0','#fed976','#feb24c','#fd8d3c','#fc4e2a','#e31a1c','#bd0026','#800026'] # <----- Define custom color gradient
 
-            if index.column() == 2: # <----- Makes row three blue
-                # see below for data structure
-                return QtGui.QColor(Qt.GlobalColor.blue)
+            if isinstance(value, int) or isinstance(value, float):
+                value = int(value) # Convert to integer for indexing
+
+                # Limit to range -5 .... +5, then convert to 0...10
+                value = max(-5, value) #values <-5 become -5
+                value  = min(3, value) # values >5 become 5
+                value = value + 5 # -5 becomes 0, +5 becomes +10
+                print(value)
+
+                return QtGui.QColor(COLORS[value])
         
         if role == Qt.ItemDataRole.ForegroundRole:
             value = self._data[index.row()][index.column()]
 
-            if (isinstance(value, int) or isinstance(value, float)) and value < 0:
-                return QtGui.QColor("red")
+            if (isinstance(value, int) or isinstance(value, float)):
+                return QtGui.QColor("white")
 
         if role == Qt.ItemDataRole.DisplayRole:
             # get the raw value
@@ -68,9 +76,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.table = QtWidgets.QTableView()
 
         data = [
-            [4, 1, 'hello', -2, 7],
-            [9, 1, 5, 3, 8],
-            [2, 1, 5, datetime(2017,10,1), 9],
+            [-5, 1, 'hello', -2, 7],
+            [9, -3, 5, 3, 8],
+            [2, 1, 5, datetime(2017,10,1), -4],
         ]
 
         self.model = TableModel(data)
