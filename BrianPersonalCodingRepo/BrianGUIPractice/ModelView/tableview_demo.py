@@ -19,7 +19,8 @@ class TableModel(QtCore.QAbstractTableModel):
 
         if role == Qt.ItemDataRole.BackgroundRole:
             value = self._data[index.row()][index.column()]
-            COLORS = ['#ffffcc','#ffeda0','#fed976','#feb24c','#fd8d3c','#fc4e2a','#e31a1c','#bd0026','#800026'] # <----- Define custom color gradient
+            COLORS = ['#ffffcc','#ffeda0','#fed976','#feb24c',
+            '#fd8d3c','#fc4e2a','#e31a1c','#bd0026','#800026'] # <----- Define custom color gradient
 
             if isinstance(value, int) or isinstance(value, float):
                 value = int(value) # Convert to integer for indexing
@@ -59,8 +60,15 @@ class TableModel(QtCore.QAbstractTableModel):
 
         if role == Qt.ItemDataRole.DecorationRole:
             value = self._data[index.row()][index.column()]
+
             if isinstance(value, datetime):
                 return QtGui.QIcon("BrianGUIPractice/ModelView/calendar.png")
+
+            if isinstance(value, bool):
+                if value:
+                    return QtGui.QIcon("BrianGUIPractice/ModelView/tick.png") # <---- if True
+                return QtGui.QIcon("BrianGUIPractice/ModelView/cross.png") # <---- if False
+            
 
 
     def rowCount(self, index):
@@ -81,8 +89,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
         data = [
             [-5, 1, 'hello', -2, 7],
-            [9, -3, 5, 3, 8],
-            [2, 1, 5, datetime(2017,10,1), -4],
+            [False, -3, 5, 3, 8],
+            [2, True, 5, datetime(2017,10,1), -4],
         ]
 
         self.model = TableModel(data) 
