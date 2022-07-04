@@ -28,7 +28,6 @@ class TableModel(QtCore.QAbstractTableModel):
                 value = max(-5, value) #values <-5 become -5
                 value  = min(3, value) # values >5 become 5
                 value = value + 5 # -5 becomes 0, +5 becomes +10
-                print(value)
 
                 return QtGui.QColor(COLORS[value])
         
@@ -58,6 +57,11 @@ class TableModel(QtCore.QAbstractTableModel):
             # Default (anything not captured above: e.g. int)
             return value
 
+        if role == Qt.ItemDataRole.DecorationRole:
+            value = self._data[index.row()][index.column()]
+            if isinstance(value, datetime):
+                return QtGui.QIcon("BrianGUIPractice/ModelView/calendar.png")
+
 
     def rowCount(self, index):
         # The length of the outer list.
@@ -81,9 +85,9 @@ class MainWindow(QtWidgets.QMainWindow):
             [2, 1, 5, datetime(2017,10,1), -4],
         ]
 
-        self.model = TableModel(data)
+        self.model = TableModel(data) 
         self.table.setModel(self.model)
-
+        self.setMinimumSize(800, 300)
         self.setCentralWidget(self.table)
 
 
