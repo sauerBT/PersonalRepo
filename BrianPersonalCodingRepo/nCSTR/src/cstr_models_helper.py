@@ -1,3 +1,16 @@
+import numpy as np
+import numerical_methods as nm
+
+# y(i) is the output concentration of CSTR for each component
+# y0(i) is the initial input concentration of CSTR for each component
+# m_in is the input mass flow rate of CSTR
+# m3n is the output mass flow rate of CSTR n of N
+# m4n is the backflow mass flow rate from CSTR n to CSTR n-1 of N
+# x is the number of material streams
+# N is the number of total CSTRs (and consequently the total number of differential equations)
+# n is the current CSTR differential equation (i.e. Differential equation of CSTR n of N)
+# Ouput (dydt) is a matrix containing CSTR output concentration change w.r.t. time and is formatted as follows: dydt[component number i][CSTR number n]
+
 # TODO int -> (listof float)
 # Produce a list of calculated mass outputs for each cstr in the series whose size is defined by the input number of cstr
 def generate_mass_out_list(m_in: float,dMndt: float,backmix: float,number_of_cstr: int) -> list[float]:
@@ -80,7 +93,6 @@ def n_cstr_ode(y: list[list[float]],y_0: list[float],m_out: list[float],mass_n: 
     else: return [calculate_stream_concentration(stream,y_0x,m_out,mass_n,backmix,m_in) for (stream, y_0x) in zip(y,y_0)]
     
 
-import numerical_methods as nm
 # (listof (listof float)) (listof float) (listof float) float (listof float) -> (listof (listof (listof float)))
 # Produce a list of numerical solver outputs (per second) for a given functions
 # NOTE: [x_n,y_rk4_n] = rk4_2d(cstrN, x0 = 0, y0 = yCstr, xn = 1, n=10, args=(yIn[t,::], massReal[t], dMdt[t], q, mIn[t]))
@@ -95,21 +107,42 @@ def replay_ode_funcs(func: callable,y: list[list[float]],loargs0: list[tuple]) -
             return acc2
         return inner_f(loargs0,y,[])
 
-import numpy as np
-# y(i) is the output concentration of CSTR for each component
-# y0(i) is the initial input concentration of CSTR for each component
-# m_in is the input mass flow rate of CSTR
-# m3n is the output mass flow rate of CSTR n of N
-# m4n is the backflow mass flow rate from CSTR n to CSTR n-1 of N
-# x is the number of material streams
-# N is the number of total CSTRs (and consequently the total number of differential equations)
-# n is the current CSTR differential equation (i.e. Differential equation of CSTR n of N)
-# Ouput (dydt) is a matrix containing CSTR output concentration change w.r.t. time and is formatted as follows: dydt[component number i][CSTR number n]
-def calculate_n_cstr(y: list[list[float]], t, y0: list[float], mass: float, dMdt: float, backmix: float, m_in: float):
-    # Below are the constants for the differential equations
-    n_cstr = len(y[0])
+# (listof float) int -> (listof (listof float))
+# Produce a set of initial conditions to be used by the ODE solver for CSTR ordinary differential equations
+def generate_initial_conditions(y_0_0: list[float],number_of_cstr: int) -> list[list[float]]:
+    def inner_gen_rec_list(y_val: float):
+        acc1: int = number_of_cstr
+        acc2: list[float] = []
+        while True:
+            if acc1 == 0:
+                return acc2
+            temp_list = acc2
+            temp_list.append(y_val)
+            acc2 = temp_list
+            acc1 = acc1 - 1
+
+    def inner_f(y_0: list[float], acc: list[list[float]]) -> list[list[float]]: 
+        for value in iter(y_0):
+            temp_list: list[list[float]] = acc
+            temp_list.append(inner_gen_rec_list(value))
+            acc = temp_list
+        return acc
+    return inner_f(y_0_0,[])
+
+# (listof (listof float)) (listof float) (listof float) float float float int int -> (listof (listof float))
+# Produce a series of ODEs for an undefined (n) number of CSTRs in series with X input componenets (called streams). 
+# NOTE:The resulting list should contain an outer list with size = X (# of streams) and inner list with size N (# of CSTRs in series)
+def calculate_n_cstr(y: list[list[float]], t, y_0: list[float], mass: float, dMdt: float, backmix: float, m_in: float,number_of_cstr: int = 1):
+    if isinstance(y_0, np.ndarray):
+        y_temp = list(y_0)
+        y_0 = y_temp
+    if not(y):
+        n_cstr: int = number_of_cstr
+        y = generate_initial_conditions(y_0,n_cstr)
+    else:
+        n_cstr = len(y[0])   
     mass_n = mass/n_cstr # Mass term for the current CSTR differential equation (i.e. mass for CSTR n of N)
     dMndt = (dMdt/n_cstr) # Mass accumulation term for the current CSTR differential equation (i.e. mass accumulation for CSTR n of N)
 
-    # Create a matrix defining the mass flow output term for each CSTR
-    return np.array(n_cstr_ode(y if type(y) == list else y.tolist(),y0,generate_mass_out_list(m_in,dMndt,backmix,n_cstr),mass_n,backmix,m_in))
+    return np.array([calculate_stream_concentration(stream,y_0x,generate_mass_out_list(m_in,dMndt,backmix,n_cstr),mass_n,backmix,m_in) for (stream, y_0x) in zip(y,y_0)])
+    #return np.array(n_cstr_ode(y if type(y) == list else y.tolist(),y0,generate_mass_out_list(m_in,dMndt,backmix,n_cstr),mass_n,backmix,m_in))
