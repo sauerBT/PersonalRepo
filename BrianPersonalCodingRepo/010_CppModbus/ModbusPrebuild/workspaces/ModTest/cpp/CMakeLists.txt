@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 3.13)
+project(modttest)
+add_executable(modttest main.cpp)
+target_link_directories(modttest PRIVATE ${CMAKE_SOURCE_DIR}/../../libmodbus/src/.libs)
+target_link_libraries(modttest modbus)

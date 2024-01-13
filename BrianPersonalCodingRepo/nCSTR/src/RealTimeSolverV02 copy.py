@@ -5,10 +5,10 @@ Created on Thurday Sep 9 2021
 """
 import numpy as np
 import matplotlib.pyplot as plt
-from CSTR_Models import *
-from NumericalMethods import *
+from cstr_models import *
+from numerical_methods import *
 import pandas as pd
-import statistics
+import os
 
 def cstrRT(yCstr, yIn, massReal, q, mIn, Ncstr, measuredValue):
     """
@@ -39,7 +39,6 @@ def cstrRT(yCstr, yIn, massReal, q, mIn, Ncstr, measuredValue):
             assert len(mIn) == tn
     assert yIn.shape[1] > 0, 'Input concentration must have AT LEAST 1 stream'
     x_streams = len(yIn[0])
-    x3 = np.linspace(0, tn, tn)
     xplot = np.empty((0))
     yplot = np.empty((0))
     dMdt = [] # initialize change in mass calculations
@@ -48,41 +47,23 @@ def cstrRT(yCstr, yIn, massReal, q, mIn, Ncstr, measuredValue):
             dMdt.append(0)
         else:
             dMdt.append(M[m] - M[m-1])
-    apiStream = 1
 
-    # Initiate plots
-    fig, axs = plt.subplots(4)
-    axs[3].plot(x3, dMdt, 'k-')
-    axs[2].plot(x3, massReal, 'k-')
-    axs[2].set_xlabel("time"), axs[2].set_ylabel("Total Mass(x)"), axs[2].set_title("Total Mass Over Time")
-    axs[1].plot(x_streams*[0], yCstr.transpose(1,0)[0,::], 'go', x3, measuredValue, 'b-' , x_streams*[(tn - 1)], yIn[(tn - 1),::], 'ro') # initialize plot
-    axs[1].set_xlabel("time"), axs[1].set_ylabel("concentration(x)"), axs[1].set_title("Concetrations of Each Stream Over Time")
-    axs[0].plot(0, yCstr.transpose(1,0)[0,apiStream], 'go', x3, measuredValue, 'b-', tn - 1, yIn[(tn - 1),1], 'ro',) # initialize plot
-    axs[0].set_xlabel("time"), axs[0].set_ylabel("concentration(x)"), axs[0].set_title("Concetration of Predicated vs Measured API Over Time")
-    plt.pause(0.005)
     # Start Solver
     for t in tqdm(range(tn)):
         # Solve ODE
         if (t == 0): # base case
-            [x_n,y_rk4_n] = rk4_2d(cstrN, x0 = 0, y0 = yCstr, xn = 1, n=10, args=(yIn[t,::], massReal[t], dMdt[t], q, mIn[t], x_streams, Ncstr))
+            [x_n,y_rk4_n] = rk4_2d(cm.calculate_n_cstr, x0 = 0, y0 = yCstr, xn = 1, n=10, args=(yIn[t,::], massReal[t], dMdt[t], q, mIn[t]))
             assert y_rk4_n.shape[1] == x_streams, f'number of solution streams ({y_rk4_n.shape[2]}) does not match the number of input streams ({x_streams})'
             xplot = np.append(xplot, t)
             yplot = y_rk4_n[9,::,::]
             yCstr = yplot
-            #axs[1].plot(x_streams*[t+1], yplot[::, (Ncstr - 1)], 'm.', markersize = 1)
-            axs[0].plot([t+1], yplot[apiStream, (Ncstr - 1)], 'm.', markersize = 1)
-            plt.pause(0.000000000001)
         else:
-            [x_n,y_rk4_n] = rk4_2d(cstrN, x0 = 0, y0 = yCstr, xn = 1, n=10, args=(yIn[t,::], massReal[t], dMdt[t], q, mIn[t], x_streams, Ncstr))
+            [x_n,y_rk4_n] = rk4_2d(cm.calculate_n_cstr, x0 = 0, y0 = yCstr, xn = 1, n=10, args=(yIn[t,::], massReal[t], dMdt[t], q, mIn[t]))
             assert y_rk4_n.shape[1] == x_streams, f'number of solution streams ({y_rk4_n.shape[2]}) does not match the number of input streams ({x_streams})'
             xplot = np.append(xplot, t)
             yplot = np.dstack([yplot, y_rk4_n[9,::,::]])
             yCstr = yplot[::,::,t]
-            #axs[1].plot(x_streams*[t+1], yplot[::, (Ncstr - 1), t], 'm.', markersize = 1)
-            axs[0].plot([t+1], yplot[apiStream, (Ncstr - 1), t], 'm.', markersize = 1)
-            plt.pause(0.000000000001)
     yplot = yplot.transpose(2, 0, 1) # transpose y output to to following dimensions: yn[iteration #][component #][CSTR #]
-
     return yplot
 
 def readRTDExp(file):
@@ -92,7 +73,7 @@ def readRTDExp(file):
     return [df]
 
 # Import and format RTD data
-file = 'C:\\Users\\brian\\iCloudDrive\\GIT\\BrianPersonalCodingRepo\\006_RTDModels\\PythonRealTimeNCSTR\\IMA_RTD_Data-v1.csv'
+file = os.path.realpath('BrianPersonalCodingRepo\\nCSTR\\IMA_RTD_Data-v1.csv')
 [df] = readRTDExp(file)
 F1_Flow = np.array(df['F1_CURR_FLW/PV.CV'])/3.6
 API_Flow = np.array(df['F2_CURR_FLW/PV.CV'])/3.6
@@ -125,12 +106,54 @@ mIn = list(Ftot_Flow[initTime:(initTime + sampleSize)][::])
 M = list(Blend_Wt[initTime:(initTime + sampleSize)][::])
 API_Conc = API_x2[initTime:(sampleSize + initTime)]
 #x3 = np.linspace(0, sampleSize, sampleSize)
-yInitCnd = X_in[0,::]
-yInitCnd = np.tile(yInitCnd, reps=(Ncstr,1)).T
+yInitCnd =     X_in[initTime,::]
+yInitCndDiff = X_in[initTime,::]
+yInitTriple =  X_in[initTime,::]
+yInitDouble =  X_in[initTime,::]
+yInitSingle =  X_in[initTime,::]
+
+yInitCnd =     np.tile(yInitCnd,     reps=(Ncstr,1)).T
+yInitTriple =  np.tile(yInitTriple,  reps=(3,1)).T
+yInitDouble =  np.tile(yInitDouble,  reps=(2,1)).T
+yInitSingle =  np.tile(yInitSingle,  reps=(1,1)).T
+yInitCndDiff = np.tile(yInitCndDiff, reps=(Ncstr - 1,1)).T
 
 print(f'API concentration array size: {np.shape(API_Conc)}')
 print(f'y Initial Conditions shape is: {np.shape(yInitCnd)}')
 assert list(np.shape(yInitCnd)) == [x_streams, Ncstr], "Initial condition shape wrong"
+assert list(np.shape(yInitCndDiff)) == [x_streams, Ncstr - 1], "Initial condition shape wrong"
+assert list(np.shape(yInitSingle)) == [x_streams, 1], "Initial condition shape wrong"
+assert list(np.shape(yInitDouble)) == [x_streams, 2], "Initial condition shape wrong"
+assert list(np.shape(yInitTriple)) == [x_streams, 3], "Initial condition shape wrong"
 
-cstrRT(yInitCnd, yIn, M, q1, mIn, Ncstr, API_Conc)
+y_q =      cstrRT(yInitCnd,     yIn.tolist(), M, q1, mIn, Ncstr,     API_Conc)
+y_diff =   cstrRT(yInitCndDiff, yIn.tolist(), M, 0,  mIn, Ncstr - 1, API_Conc)
+y_norm =   cstrRT(yInitCnd,     yIn.tolist(), M, 0,  mIn, Ncstr,     API_Conc)
+y_single = cstrRT(yInitSingle,  yIn.tolist(), M, 0,  mIn, 1,         API_Conc)
+y_double = cstrRT(yInitDouble,  yIn.tolist(), M, 0,  mIn, 2,         API_Conc)
+y_triple = cstrRT(yInitTriple,  yIn.tolist(), M, 0,  mIn, 3,         API_Conc)
+
+y_plot_q = y_q[::, 1, Ncstr - 1]
+y_plot_diff = y_diff[::, 1, Ncstr - 2]
+y_plot_norm = y_norm[::, 1, Ncstr - 1]
+y_plot_single = y_single[::, 1, 0]
+y_plot_double = y_double[::, 1, 1]
+y_plot_triple = y_triple[::, 1, 2]
+
+yplotx = np.linspace(0, len(y_plot_q.T), len(y_plot_q.T))
+ax = plt.subplot(1,1,1)
+#axs[0].plot(0, yInitCnd.transpose(1,0)[0,1], 'go', yplotx, API_Conc, 'b-', len(yIn) - 1, yIn[(len(yIn) - 1),1], 'ro',) # initialize plot
+ax.plot(yplotx, API_Conc, 'b-') # initialize plot
+ax.set_xlabel("time"), ax.set_ylabel("concentration(x)"), ax.set_title("Concetration of Predicated vs Measured API Over Time")
+"""ax.plot(yplotx, y_plot_q, 'm-', yplotx, y_plot_diff, 'o-', yplotx, y_plot_norm, 'g-', markersize = 1)
+ax.legend(["NIR API", f"API {Ncstr} CSTR w/ q={q1}", f"API {Ncstr - 1} CSTR w/ q=0", f"API {Ncstr} CSTR w/ q=0"]) """
+ax.plot(yplotx, y_plot_q, 'm-', yplotx, y_plot_diff, 'o-', yplotx, y_plot_single, 'g-', y_plot_double, 'k-', y_plot_triple, 'r-', markersize = 1)
+ax.legend(["NIR API", f"API {Ncstr} CSTR w/ q={q1}", f"API {Ncstr - 1} CSTR w/ q=0", f"API 1 CSTR w/ q=0", f"API 2 CSTR w/ q=0", f"API 3 CSTR w/ q=0"])
+#axs[0].plot(yplotx, y_plot_q, 'm.', yplotx, y_plot_norm, 'b-', markersize = 1)
+#axs[1].plot(x_streams*[0], yInitCnd.transpose(1,0)[0,::], 'go', yplotx, API_Conc, 'b-' , x_streams*[(len(yIn) - 1)], yIn[(len(yIn) - 1),::], 'ro') # initialize plot
+#axs[1].set_xlabel("time"), axs[1].set_ylabel("concentration(x)"), axs[1].set_title("Concetrations of Each Stream Over Time")
+#print(1000000*np.square(API_Conc -cstrRT(yInitCnd, yIn, M, q1, mIn, round(Ncstr), API_Conc)[::, 1, Ncstr - 1]))
+
+
+plt.pause(0.005)
 plt.show()

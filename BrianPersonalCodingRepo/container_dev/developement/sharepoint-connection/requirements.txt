@@ -1,0 +1,8 @@
+shareplum
+paho-mqtt
+requests_ntlm
+pandas
+fastapi
+uvicorn
+redis
+debugpy
