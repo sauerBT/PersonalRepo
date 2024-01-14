@@ -7,6 +7,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from cstr_models import *
 from numerical_methods import *
+import cstr_models_helper as ch
 import pandas as pd
 import os
 
@@ -73,7 +74,7 @@ def readRTDExp(file):
     return [df]
 
 # Import and format RTD data
-file = os.path.realpath('BrianPersonalCodingRepo\\nCSTR\\IMA_RTD_Data-v1.csv')
+file = os.path.realpath('nCSTR\\IMA_RTD_Data-v1.csv')
 [df] = readRTDExp(file)
 F1_Flow = np.array(df['F1_CURR_FLW/PV.CV'])/3.6
 API_Flow = np.array(df['F2_CURR_FLW/PV.CV'])/3.6
@@ -126,12 +127,20 @@ assert list(np.shape(yInitSingle)) == [x_streams, 1], "Initial condition shape w
 assert list(np.shape(yInitDouble)) == [x_streams, 2], "Initial condition shape wrong"
 assert list(np.shape(yInitTriple)) == [x_streams, 3], "Initial condition shape wrong"
 
-y_q =      cstrRT(yInitCnd,     yIn.tolist(), M, q1, mIn, Ncstr,     API_Conc)
-y_diff =   cstrRT(yInitCndDiff, yIn.tolist(), M, 0,  mIn, Ncstr - 1, API_Conc)
-y_norm =   cstrRT(yInitCnd,     yIn.tolist(), M, 0,  mIn, Ncstr,     API_Conc)
-y_single = cstrRT(yInitSingle,  yIn.tolist(), M, 0,  mIn, 1,         API_Conc)
-y_double = cstrRT(yInitDouble,  yIn.tolist(), M, 0,  mIn, 2,         API_Conc)
-y_triple = cstrRT(yInitTriple,  yIn.tolist(), M, 0,  mIn, 3,         API_Conc)
+#y_0: list[float], mass: float, dMdt: float, backmix: float, m_in: float
+#args=(yIn[t,::], massReal[t], dMdt[t], q, mIn[t])
+y_q =      ch.replay_ode_funcs(yInitCnd,     yIn, M, q1, mIn)
+y_diff =   ch.replay_ode_funcs(yInitCndDiff, yIn, M, 0,  mIn)
+y_norm =   ch.replay_ode_funcs(yInitCnd,     yIn, M, 0,  mIn)
+y_single = ch.replay_ode_funcs(yInitSingle,  yIn, M, 0,  mIn)
+y_double = ch.replay_ode_funcs(yInitDouble,  yIn, M, 0,  mIn)
+y_triple = ch.replay_ode_funcs(yInitTriple,  yIn, M, 0,  mIn)
+# y_q =      ch.replay_ode_funcs(yInitCnd,     yIn, M, q1, mIn, Ncstr,     API_Conc)
+# y_diff =   ch.replay_ode_funcs(yInitCndDiff, yIn, M, 0,  mIn, Ncstr - 1, API_Conc)
+# y_norm =   ch.replay_ode_funcs(yInitCnd,     yIn, M, 0,  mIn, Ncstr,     API_Conc)
+# y_single = ch.replay_ode_funcs(yInitSingle,  yIn, M, 0,  mIn, 1,         API_Conc)
+# y_double = ch.replay_ode_funcs(yInitDouble,  yIn, M, 0,  mIn, 2,         API_Conc)
+# y_triple = ch.replay_ode_funcs(yInitTriple,  yIn, M, 0,  mIn, 3,         API_Conc)
 
 y_plot_q = y_q[::, 1, Ncstr - 1]
 y_plot_diff = y_diff[::, 1, Ncstr - 2]

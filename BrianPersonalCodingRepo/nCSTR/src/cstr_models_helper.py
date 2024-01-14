@@ -98,14 +98,13 @@ def n_cstr_ode(y: list[list[float]],y_0: list[float],m_out: list[float],mass_n: 
 # NOTE: [x_n,y_rk4_n] = rk4_2d(cstrN, x0 = 0, y0 = yCstr, xn = 1, n=10, args=(yIn[t,::], massReal[t], dMdt[t], q, mIn[t]))
     #def replay_ode_funcs(y: list[list[float]],y_input: list[list[float]],mass: list[float],backmix: float,mass_in: list[float]) -> list[list[list[float]]]:
 def replay_ode_funcs(func: callable,y: list[list[float]],loargs0: list[tuple]) -> list[list[list[float]]]:
-    if not(y): return []
-    else:
-        def inner_f(loargs: list[tuple],acc1: list[list[float]],acc2: list[list[list[float]]]) -> list[list[list[float]]]:
-            for tu in iter(loargs):
-                [x_n,acc1] = nm.rk4_2d(func,x0 = 0,y0 = y,xn = 1,n=10,args=(tu))
-                acc2.append(list(acc1))
-            return acc2
-        return inner_f(loargs0,y,[])
+    def inner_f(loargs: list[tuple],acc1: list[list[float]],acc2: list[list[list[float]]]) -> list[list[list[float]]]:
+        for tu in iter(loargs):
+            [x_n,temp_list] = nm.rk4_2d(func,x0 = 0,y0 = acc1,xn = 1,n=10,args=(tu))
+            acc2.append(temp_list.tolist())
+            acc1 = temp_list[9,::]
+        return acc2
+    return inner_f(loargs0,y,[])
 
 # (listof float) int -> (listof (listof float))
 # Produce a set of initial conditions to be used by the ODE solver for CSTR ordinary differential equations
@@ -134,9 +133,14 @@ def generate_initial_conditions(y_0_0: list[float],number_of_cstr: int) -> list[
 # NOTE:The resulting list should contain an outer list with size = X (# of streams) and inner list with size N (# of CSTRs in series)
 def calculate_n_cstr(y: list[list[float]], t, y_0: list[float], mass: float, dMdt: float, backmix: float, m_in: float,number_of_cstr: int = 1):
     if isinstance(y_0, np.ndarray):
-        y_temp = list(y_0)
-        y_0 = y_temp
-    if not(y):
+        y_0_temp = y_0.tolist()
+        y_0 = y_0_temp
+    if isinstance(y, np.ndarray):
+        y_temp = y.tolist()
+        y = y_temp
+    if not(y_0):
+        return np.array([])
+    elif not(y):
         n_cstr: int = number_of_cstr
         y = generate_initial_conditions(y_0,n_cstr)
     else:

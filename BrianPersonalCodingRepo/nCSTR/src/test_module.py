@@ -129,34 +129,34 @@ class TestCstrFunctions(unittest.TestCase):
     #                                                                               ch.calculate_stream_concentration(YI_X3_N3_01[1],YIN_X3_01[1],MI_N3_01,MN,Q1,MIN),
     #                                                                               ch.calculate_stream_concentration(YI_X3_N3_01[2],YIN_X3_01[2],MI_N3_01,MN,Q1,MIN)],"Test (N=3,X=3)") 
 
-    def test_replay_cstr(self) -> None:
+    def test_replay_ode_funcs(self) -> None:
 
         Q1 = .5
-        # YI_X3_N3_01 = [[.2,.2,.2],[.5,.5,.5],[.3,.3,.3]]
-        # YI_X1_N3_01 = [[1,1,1]]
-        # YI_X3_N1_01 = [[.2],[.5],[.3]]
-        # YIN_X1_N1_01 = [[1]]
-        # YIN_X1_01 = [[1]]
-        # mass = [1000,1010,1030]
-        # mass_in = [1,1,1]
-        # dmdt0 = ch.change_in_mass([1000])
-        # dmdt1 = ch.change_in_mass(mass)
-        # YIN_X3_01 = [[.2,.5,.3],[.2,.5,.3],[.2,.5,.3]]
-        # MI_N1_01 = ch.generate_mass_out_list(mass_in[0],.5,0,1)
-        # MI_N3_01 = [ch.generate_mass_out_list(mass_in[0],.5,0,3),
-        #             ch.generate_mass_out_list(mass_in[1],.5,0,3),
-        #             ch.generate_mass_out_list(mass_in[2],.5,0,3)]
-        # [x_n,A1] = nm.rk4_2d(ch.n_cstr_exec,x0 = 0,y0 = YI_X3_N3_01,xn = 1,n=10,args=(YIN_X3_01[0],mass[0],dmdt1[0],0,mass_in[0]))
-        # [x_n,A2] = nm.rk4_2d(ch.n_cstr_exec,x0 = 0,y0 = A1,xn = 1,n=10,args=(YIN_X3_01[1],mass[1],dmdt1[1],0,mass_in[1]))
-        # [x_n,A3] = nm.rk4_2d(ch.n_cstr_exec,x0 = 0,y0 = A2,xn = 1,n=10,args=(YIN_X3_01[2],mass[2],dmdt1[2],0,mass_in[2]))
-        # # (y: list[list[float]], t, y0: list[float], mass: float, dMdt: float, backmix: float, m_in: float):
-        # self.assertEqual(ch.replay_ode_funcs(ch.n_cstr_exec,[],[([],0,dmdt0,0,0)]),[],"base case test 1")
-        # #self.assertEqual(ch.replay_ode_funcs(ch.n_cstr_ode,YIN_X1_N1_01,[(YIN_X1_01[0],mass[0],0,mass_in[0])]),[ch.n_cstr_ode(YIN_X1_N1_01,YIN_X1_01[0],MI_N1_01,mass[0],0,mass_in[0])],"single cstr single input test 1")
-        # self.assertEqual(ch.replay_ode_funcs(ch.n_cstr_exec,YI_X3_N3_01,[(YIN_X3_01[0],mass[0],dmdt1[0],0,mass_in[0]),
-        #                                                                 (YIN_X3_01[1],mass[1],dmdt1[1],0,mass_in[1]),
-        #                                                                 (YIN_X3_01[2],mass[2],dmdt1[2],0,mass_in[2])]),[A1,
-        #                                                                                                                 A2,
-        #                                                                                                                 A3],"multi cstr multi input test 1")
+        YI_X3_N3_01 = [[.2,.2,.2],[.5,.5,.5],[.3,.3,.3]]
+        YI_X1_N3_01 = [[1,1,1]]
+        YI_X3_N1_01 = [[.2],[.5],[.3]]
+        YIN_X1_N1_01 = [[1]]
+        YIN_X1_01 = [[1]]
+        mass = [1000,1010,1030]
+        mass_in = [1,1,1]
+        dmdt0 = ch.change_in_mass([1000])
+        dmdt1 = ch.change_in_mass(mass)
+        YIN_X3_01 = [[.2,.5,.3],[.2,.5,.3],[.2,.5,.3]]
+        MI_N1_01 = ch.generate_mass_out_list(mass_in[0],.5,0,1)
+        MI_N3_01 = [ch.generate_mass_out_list(mass_in[0],.5,0,3),
+                    ch.generate_mass_out_list(mass_in[1],.5,0,3),
+                    ch.generate_mass_out_list(mass_in[2],.5,0,3)]
+        [x_n,A1] = nm.rk4_2d(ch.calculate_n_cstr,x0 = 0,y0 = YI_X3_N3_01,xn = 1,n=10,args=(YIN_X3_01[0],mass[0],dmdt1[0],0,mass_in[0]))
+        [x_n,A2] = nm.rk4_2d(ch.calculate_n_cstr,x0 = 0,y0 = A1[9,::],xn = 1,n=10,args=(YIN_X3_01[1],mass[1],dmdt1[1],0,mass_in[1]))
+        [x_n,A3] = nm.rk4_2d(ch.calculate_n_cstr,x0 = 0,y0 = A2[9,::],xn = 1,n=10,args=(YIN_X3_01[2],mass[2],dmdt1[2],0,mass_in[2]))
+        # (y: list[list[float]], t, y0: list[float], mass: float, dMdt: float, backmix: float, m_in: float):
+        #np.testing.assert_allclose(ch.replay_ode_funcs(ch.calculate_n_cstr,[],[([],0,dmdt0[0],0,0)]),np.array([]))
+        #self.assertEqual(ch.replay_ode_funcs(ch.n_cstr_ode,YIN_X1_N1_01,[(YIN_X1_01[0],mass[0],0,mass_in[0])]),[ch.n_cstr_ode(YIN_X1_N1_01,YIN_X1_01[0],MI_N1_01,mass[0],0,mass_in[0])],"single cstr single input test 1")
+        np.testing.assert_allclose(ch.replay_ode_funcs(ch.calculate_n_cstr,YI_X3_N3_01,[(YIN_X3_01[0],mass[0],dmdt1[0],0,mass_in[0]),
+                                                                        (YIN_X3_01[1],mass[1],dmdt1[1],0,mass_in[1]),
+                                                                        (YIN_X3_01[2],mass[2],dmdt1[2],0,mass_in[2])]),[A1,
+                                                                                                                        A2,
+                                                                                                                        A3])
 
     def test_generate_initial_conditions(self) -> None:
         self.assertEqual(ch.generate_initial_conditions([],1),[],"base case test")
@@ -164,7 +164,6 @@ class TestCstrFunctions(unittest.TestCase):
         self.assertEqual(ch.generate_initial_conditions([1],3),[[1,1,1]],"1 element array given 3 case test")
         self.assertEqual(ch.generate_initial_conditions([.2,.5,.3],1),[[.2],[.5],[.3]],"3 element array given 1 case test")
         self.assertEqual(ch.generate_initial_conditions([.2,.5,.3],3),[[.2,.2,.2],[.5,.5,.5],[.3,.3,.3]],"3 element array given 3 case test")
-
 
     def test_calculate_n_cstr (self) -> None:
         #(y: list[list[float]], t, y0: list[float], mass: float, dMdt: float, backmix: float, m_in: float):
