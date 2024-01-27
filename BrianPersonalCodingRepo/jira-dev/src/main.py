@@ -2,9 +2,9 @@
 from jira_request import get_jira_project_issues, generate_jira_url, iter_dict, iter_list
 import dictionary_funcs as df
 jira_url = "https://control-associates.atlassian.net"
-project_key = "MBPR"
+project_key = "BP"
 username = "bsauerborn@control-associates.com"
-password_or_api_token = "ATATT3xFfGF0rV8vMjTWh3UqKvbXw3uHVfcKleNp8N7O5h6D5k51jI16sEvujZkkl3M5gfmba-fvCrixImyhjsS_ChMZdbyYKmdmAc8A722TdQNr62GiiGgTLMg6AGTARhg_oRp88aRCMwx1TQ-UdS5hq4355R0zDcBC9rSNgSX7uZocbfgTvEA=9EC2BB84"
+password_or_api_token = "ATATT3xFfGF0Ehtj-S9-TJGq_Fesxa9O6papkXqK0Ay8cqIFWRrikS7rThC6XF099HFq8ZChee-ADT6WpOxmY0r-3o5ZPZccj0yL22vdsg63zjM_891cO6eJt2K9jggeCacfP_Vs1hSKh0zIIEQT9DTQ4lYGfiYcrvXU2mkeOww0bSWXQJZwHUU=3731FEC8" # "ATATT3xFfGF0rV8vMjTWh3UqKvbXw3uHVfcKleNp8N7O5h6D5k51jI16sEvujZkkl3M5gfmba-fvCrixImyhjsS_ChMZdbyYKmdmAc8A722TdQNr62GiiGgTLMg6AGTARhg_oRp88aRCMwx1TQ-UdS5hq4355R0zDcBC9rSNgSX7uZocbfgTvEA=9EC2BB84"
 
 # JQL (Jira Query Language) to filter issues by project
 jql = f"project={project_key}"
@@ -72,7 +72,7 @@ def publish(client):
     old_dict = {}
     while True:
         sleep(20)
-
+        print("New Transmission")
         new_dict = iter_dict(get_jira_project_issues(username, password_or_api_token, jql, generate_jira_url(jira_url)))
         temp_dict = df.dictionary_compare(new_dict,old_dict)
         old_dict = new_dict
@@ -84,9 +84,9 @@ def publish(client):
             result: [0, 1]
             status = result[0]
             if status == 0:
-                print(f"Send `{msg}` to topic `{topic}`")
+                print(f"Send `{msg}` to topic `{topic}` with value '{temp_dict[key]}'")
             else:
-                print(f"Failed to send message to topic {topic}")
+                print(f"Failed to send message to topic {topic} with value '{temp_dict[key]}'")
             msg_count += 1
             if msg_count > 1000000:
                 break

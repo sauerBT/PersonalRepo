@@ -6,19 +6,47 @@ FILTER_PARAMETERS = ["customfield_10016","statuscategorychangedate","key","name"
 def generate_jira_url(jira_base_url: str, type: str="ISSUES") -> str:
     return f"{jira_base_url}/rest/api/2/search"
 
+# def get_jira_project_issues(username: str, password_or_api_token: str, jql: str, issues_endpoint: str) -> dict:
+#     auth = HTTPBasicAuth(username, password_or_api_token)
+#     params = {
+#         "jql": jql,
+#         "maxResults": 500,  # Adjust as needed
+#     }
+#     try:
+#         response = requests.get(issues_endpoint, auth=auth, params=params)
+#         issues = response.json()
+#         return issues
+#     except requests.exceptions.RequestException as e:
+#         return (f"Error: {e}")
+    
 def get_jira_project_issues(username: str, password_or_api_token: str, jql: str, issues_endpoint: str) -> dict:
     auth = HTTPBasicAuth(username, password_or_api_token)
     params = {
         "jql": jql,
-        "maxResults": 500,  # Adjust as needed
+        "startAt": 0,      # Start at the first issue
+        "maxResults": 100, # Adjust as needed, but 100 is the default maximum
     }
-    try:
-        response = requests.get(issues_endpoint, auth=auth, params=params)
-        issues = response.json()
-        return issues
-    except requests.exceptions.RequestException as e:
-        return (f"Error: {e}")
     
+    all_issues = []
+
+    try:
+        while True:
+            response = requests.get(issues_endpoint, auth=auth, params=params)
+            issues = response.json()
+            
+            if 'issues' in issues:
+                all_issues.extend(issues['issues'])
+
+            if len(all_issues) >= issues.get('total', 0):
+                break  # All issues retrieved
+            
+            params['startAt'] += params['maxResults']  # Move to the next page
+
+    except requests.exceptions.RequestException as e:
+        return {"error": f"Error: {e}"}
+
+    return {"issues": all_issues}
+
 # Dictionary -> Dictionary
 # Produce a flattened version of the given dictionary of depth n with keys at each depth separated by "/" and values applied when there is no further depth to the dictionar
 # TODO #if key_filter(FILTER_PARAMETERS, key):  

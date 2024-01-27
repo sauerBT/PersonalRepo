@@ -1,5 +1,6 @@
 import numpy as np
 import numerical_methods as nm
+import list_funcs as lf
 
 # y(i) is the output concentration of CSTR for each component
 # y0(i) is the initial input concentration of CSTR for each component
@@ -109,21 +110,10 @@ def replay_ode_funcs(func: callable,y: list[list[float]],loargs0: list[tuple]) -
 # (listof float) int -> (listof (listof float))
 # Produce a set of initial conditions to be used by the ODE solver for CSTR ordinary differential equations
 def generate_initial_conditions(y_0_0: list[float],number_of_cstr: int) -> list[list[float]]:
-    def inner_gen_rec_list(y_val: float):
-        acc1: int = number_of_cstr
-        acc2: list[float] = []
-        while True:
-            if acc1 == 0:
-                return acc2
-            temp_list = acc2
-            temp_list.append(y_val)
-            acc2 = temp_list
-            acc1 = acc1 - 1
-
     def inner_f(y_0: list[float], acc: list[list[float]]) -> list[list[float]]: 
         for value in iter(y_0):
             temp_list: list[list[float]] = acc
-            temp_list.append(inner_gen_rec_list(value))
+            temp_list.append(lf.generate_list_from_number(value,number_of_cstr))
             acc = temp_list
         return acc
     return inner_f(y_0_0,[])
