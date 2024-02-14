@@ -4,19 +4,11 @@ Created on Mon Feb 25 15:07:55 2019
 
 @author: bsauer
 """
-import time
 import numpy as np
-import h5py
 import matplotlib.pyplot as plt
-import scipy
-from PIL import Image
 #from scipy import ndimage
 from NN_Helper import *
 ### CONSTANTS ###
-
-#    layers_dims = [12288, 20, 7, 5, 1] #  4-layer model
-
-# GRADED FUNCTION: L_layer_model
 
 def L_layer_model(X, Y, layers_dims, learning_rate = 0.0075, num_iterations = 3000, print_cost=False, lambd = 0):#lr was 0.009
     """
@@ -37,32 +29,22 @@ def L_layer_model(X, Y, layers_dims, learning_rate = 0.0075, num_iterations = 30
     np.random.seed(1)
     costs = []                         # keep track of cost
     
-    # Parameters initialization. (≈ 1 line of code)
-    ### START CODE HERE ###
+    # Parameters initialization.
     parameters = initialize_parameters_deep(layers_dims)
-    ### END CODE HERE ###
     
     # Loop (gradient descent)
     for i in range(0, num_iterations):   
         # Forward propagation: [LINEAR -> RELU]*(L-1) -> LINEAR -> SIGMOID.
-        ### START CODE HERE ### (≈ 1 line of code)
         AL, caches = L_model_forward(X, parameters)
-        ### END CODE HERE ###
         
         # Compute cost.
-        ### START CODE HERE ### (≈ 1 line of code)
         cost = compute_cost_with_regularization(AL, Y, parameters, lambd)
-        ### END CODE HERE ###
     
         # Backward propagation.
-        ### START CODE HERE ### (≈ 1 line of code)
         grads = L_model_backward_with_regularization(AL, Y, caches, lambd)
-        ### END CODE HERE ###
- 
+
         # Update parameters.
-        ### START CODE HERE ### (≈ 1 line of code)
         parameters = update_parameters(parameters, grads, learning_rate)
-        ### END CODE HERE ###
                 
         # Print the cost every 100 training example
         if print_cost and i % 100 == 0:
@@ -71,11 +53,11 @@ def L_layer_model(X, Y, layers_dims, learning_rate = 0.0075, num_iterations = 30
             costs.append(cost)
             # plot output vs input
             x1 = np.linspace(0,AL.shape[1], num=AL.shape[1])
-            x2 = np.linspace(0,Y.shape[0], num=Y.shape[0])
+            x2 = np.linspace(0,Y.shape[1], num=Y.shape[1])
             # print(AL)
             plt.figure(0)
-            plt.plot(x1,AL.T, 'ko', markersize=.1)
-            plt.plot(x2,Y, 'yo', markersize=.1)
+            plt.plot(x2,Y.T, 'yo', markersize=.07)
+            plt.plot(x1,AL.T, 'ko', markersize=.07)
             plt.ylabel('Filtered Rate')
             plt.xlabel('Data Points')
             plt.title("Learned Filter")
@@ -90,5 +72,3 @@ def L_layer_model(X, Y, layers_dims, learning_rate = 0.0075, num_iterations = 30
     plt.show()
     
     return parameters, AL
-
-#    parameters = L_layer_model(train_x, train_y, layers_dims, num_iterations = 2500, print_cost = True)

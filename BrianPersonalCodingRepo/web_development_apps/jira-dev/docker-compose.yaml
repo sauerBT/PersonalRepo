@@ -1,0 +1,17 @@
+services:
+  app:
+    build: .
+    container_name: python-jira-rip
+    command:  python src/main.py
+    ports:
+      - 80:80
+      - 443:443
+      - 8883:8883
+      - 1883:1883
+    volumes:
+      - .:/code
+    # depends_on:
+    #   - redis
+
+  # redis:
+  #   image: redis:alpine
