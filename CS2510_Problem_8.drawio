@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2024-04-26T12:11:59.122Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:125.0) Gecko/20100101 Firefox/125.0" etag="Bit1e1pNb371q3UGwIsS" version="24.3.0" type="github" pages="2">
+<mxfile host="app.diagrams.net" modified="2024-04-26T12:12:35.908Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:125.0) Gecko/20100101 Firefox/125.0" etag="MxxfrO31r6VWJLwsQzJl" version="24.3.0" type="github" pages="2">
   <diagram id="C5RBs43oDa-KdzZeNtuy" name="class_diagram">
     <mxGraphModel dx="1770" dy="1105" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
@@ -213,13 +213,13 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="VlxOi-0BIwexqD8f0rIB-1" value="&lt;div&gt;IDoc KCv2&lt;br&gt;&lt;/div&gt;&lt;div&gt;Author &quot;Warda Elakkari&quot;&lt;/div&gt;&lt;div&gt;title: &quot;Kofta Code v2&quot;&lt;/div&gt;&lt;div&gt;url: &quot;www.ElakkariPubs.com&quot;&lt;/div&gt;&lt;div&gt;documents: Empty&lt;br&gt;&lt;/div&gt;" style="shape=internalStorage;whiteSpace=wrap;html=1;backgroundOutline=1;" vertex="1" parent="1">
+        <mxCell id="VlxOi-0BIwexqD8f0rIB-1" value="&lt;div&gt;IDoc KCv2&lt;br&gt;&lt;/div&gt;&lt;div&gt;Author &quot;Brian Sauerborn&quot;&lt;/div&gt;&lt;div&gt;title: &quot;Kofta Code v2&quot;&lt;/div&gt;&lt;div&gt;url: &quot;www.ElakkariPubs.com&quot;&lt;/div&gt;&lt;div&gt;documents: Empty&lt;br&gt;&lt;/div&gt;" style="shape=internalStorage;whiteSpace=wrap;html=1;backgroundOutline=1;" vertex="1" parent="1">
           <mxGeometry x="-10" y="860" width="230" height="170" as="geometry" />
         </mxCell>
         <mxCell id="VlxOi-0BIwexqD8f0rIB-2" value="&lt;div&gt;IDoc GCv1&lt;br&gt;&lt;/div&gt;&lt;div&gt;Author &quot;Warda Elakkari&quot;&lt;/div&gt;&lt;div&gt;title: &quot;George Code v1&quot;&lt;/div&gt;&lt;div&gt;publisher: &quot;ElakkariPubs&quot;&lt;/div&gt;&lt;div&gt;documents: Empty&lt;br&gt;&lt;/div&gt;" style="shape=internalStorage;whiteSpace=wrap;html=1;backgroundOutline=1;" vertex="1" parent="1">
           <mxGeometry x="-290" y="860" width="230" height="170" as="geometry" />
         </mxCell>
-        <mxCell id="VlxOi-0BIwexqD8f0rIB-3" value="&lt;div&gt;IDoc KCv1&lt;br&gt;&lt;/div&gt;&lt;div&gt;Author &quot;Warda Elakkari&quot;&lt;/div&gt;&lt;div&gt;title: &quot;Kofta Code v1&quot;&lt;/div&gt;&lt;div&gt;publisher: &quot;ElakkariPubs&quot;&lt;/div&gt;&lt;div&gt;documents: Empty&lt;br&gt;&lt;/div&gt;" style="shape=internalStorage;whiteSpace=wrap;html=1;backgroundOutline=1;" vertex="1" parent="1">
+        <mxCell id="VlxOi-0BIwexqD8f0rIB-3" value="&lt;div&gt;IDoc KCv1&lt;br&gt;&lt;/div&gt;&lt;div&gt;Author &quot;Brian Sauerborn&quot;&lt;br&gt;&lt;/div&gt;&lt;div&gt;title: &quot;Kofta Code v1&quot;&lt;/div&gt;&lt;div&gt;publisher: &quot;ElakkariPubs&quot;&lt;/div&gt;&lt;div&gt;documents: Empty&lt;br&gt;&lt;/div&gt;" style="shape=internalStorage;whiteSpace=wrap;html=1;backgroundOutline=1;" vertex="1" parent="1">
           <mxGeometry x="260" y="860" width="230" height="170" as="geometry" />
         </mxCell>
       </root>
