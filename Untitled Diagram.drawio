@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2024-04-29T18:58:11.490Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36" etag="MKVMh37OurBQq12NDNKr" version="24.2.8" type="github" pages="2">
+<mxfile host="app.diagrams.net" modified="2024-04-29T19:07:08.128Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36" etag="johcZYqqv6g0363SmgCP" version="24.2.8" type="github" pages="2">
   <diagram name="Overview" id="80d4a630-b321-0f5e-ff81-c5a36ef4752d">
     <mxGraphModel dx="2049" dy="1103" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850" background="none" math="0" shadow="0">
       <root>
@@ -113,7 +113,27 @@
           <mxGeometry x="60" y="290" width="90" height="120" as="geometry" />
         </mxCell>
         <mxCell id="O__Id1wXW29hGzOCy_iJ-1" value="ML Trainer" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#000000;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=17;fontStyle=1;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.sagemaker_model;" vertex="1" parent="1">
-          <mxGeometry x="250" y="120" width="108" height="108" as="geometry" />
+          <mxGeometry x="240" y="120" width="108" height="108" as="geometry" />
+        </mxCell>
+        <mxCell id="O__Id1wXW29hGzOCy_iJ-12" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="O__Id1wXW29hGzOCy_iJ-7" target="O__Id1wXW29hGzOCy_iJ-11">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="560" y="80" />
+              <mxPoint x="560" y="120" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="O__Id1wXW29hGzOCy_iJ-7" value="Hot Data" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;" vertex="1" parent="1">
+          <mxGeometry x="450" y="40" width="60" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="O__Id1wXW29hGzOCy_iJ-8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="O__Id1wXW29hGzOCy_iJ-1" target="O__Id1wXW29hGzOCy_iJ-7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="O__Id1wXW29hGzOCy_iJ-10" value="Projects - 1, 2, 3, ... , N&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;dashPattern=8 8;align=left;verticalAlign=top;container=1;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="590" y="30" width="510" height="280" as="geometry" />
+        </mxCell>
+        <mxCell id="O__Id1wXW29hGzOCy_iJ-11" value="Datasets&lt;br&gt;&lt;div&gt;V1: Targets vs Ouputs&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;dashPattern=8 8;align=left;verticalAlign=top;container=1;fillColor=none;" vertex="1" parent="O__Id1wXW29hGzOCy_iJ-10">
+          <mxGeometry x="20" y="65" width="190" height="150" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
